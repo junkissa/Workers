@@ -1,4 +1,4 @@
-﻿#include"fstream"
+#include"fstream"
 #include"iostream"
 #include"string"
 #include"Workers.h"
@@ -7,12 +7,34 @@
 #include "sstream"
 using namespace std;
 
-vector<Worker> sortSalary(const vector<Worker> & old);
+vector<shared_ptr<Worker>> sortSalary(const vector<shared_ptr<Worker>> & old);
 bool outFile(string fileName, vector<shared_ptr<Worker>> & outWorkers);
-bool inFile(string fileName, vector<Worker> & inWorkers);
-bool outFile(string fileName, vector<shared_ptr<Worker>> & outWorkers, int N, int fromTop1_or_fromBottom0); 
+bool inFile(string fileName, vector<shared_ptr<Worker>> & inWorkers);
+bool outFile(string fileName, vector<shared_ptr<Worker>> & outWorkers, int N, int fromTop1_or_fromBottom0);
 
 
+int main()
+{
+	string outFcopy = "outCopy.txt";
+	string outFsorted = "outSorted.txt";
+	string outFromTop = "outFromTop.txt";
+	string outFromBottom = "outFromBottom.txt";
+
+	string inF = "in.txt";
+
+	vector<shared_ptr<Worker>> workers;
+	if (inFile(inF, workers))
+		outFile(outFcopy, workers);
+	vector<shared_ptr<Worker>> sorted;
+	sorted = sortSalary(workers);
+	outFile(outFsorted, sorted);
+	outFile(outFromTop, sorted, 5, 1);
+	outFile(outFromBottom, sorted, 5, 0);
+
+
+	system("pause");
+	return 0;
+}
 
 
 
@@ -39,22 +61,21 @@ vector<shared_ptr<Worker>> sortSalary(const vector<shared_ptr<Worker>> & old)
 				break;
 			}
 
-			// ñîðòèðîâêà ïî ôàìèëèè
+			// sort by Lastname
 			else if (old[i]->getAverSalary() == res[j]->getAverSalary())
 			{
 				res[j + 1] = old[i];
 				for (int k = 0; k < (old[i]->getLastName()).size() && k < (res[j]->getLastName()).length(); ++k)
 				{
-					if ((old[i]->getLastName())[k] == (res[j]->getLastName())[k]) // ñîâïàäàþùèå áóêâ³ â íà÷àëå ôàìèëèè
+					if ((old[i]->getLastName())[k] == (res[j]->getLastName())[k]) // the same letters in the begining
 						continue;
 
-					else if ((old[i]->getLastName())[k] >(res[j]->getLastName())[k]) // åñëè ñîðòèðóåìûé îáúåêò ïîçæå â ñïèñêå,
+					else if ((old[i]->getLastName())[k] >(res[j]->getLastName())[k]) // new worker must be after existed
 					{
 						place = j + 1;
 						break;
-					}														  // ïðîñòî âûõîäèì òàê êàê ìû åãî óæå ïîñòàâèëè íà ìåñòî j+1
-
-					else if ((old[i]->getLastName())[k] < (res[j]->getLastName())[k]) // åñëè ñîðòèðóåìûé îáúåêò ðàíüøå â ñïèñêå, ïåðåìåùàåì
+					}
+					else if ((old[i]->getLastName())[k] < (res[j]->getLastName())[k]) // new worker must be before existed
 					{
 						res[j + 1] = res[j];
 						place = j;
@@ -93,13 +114,13 @@ bool inFile(string fileName, vector<shared_ptr<Worker>> & inWorkers)
 	string strLine;
 	vector<string> vectorOfLines;
 
-	while (getline(fi, strLine)) // êîïèðóåì ñòðîêè èç ôàéëà â ìàññèâ vectorOfLines
+	while (getline(fi, strLine)) // copy lines of all workers
 	{
 		vectorOfLines.push_back(strLine);
 	}
 
 	int N = vectorOfLines.size();
-	for (int i = 0; i < N; ++i) // äëÿ êàæäîé ñòðîêè-èíôîðìàöèè ïðî ðàáîòíèêà ñ÷èòûâàåì è ïðîâåðÿåì èíôîðìàöèþ
+	for (int i = 0; i < N; ++i) // check and add information
 	{
 		string strStream = vectorOfLines[i];
 		istringstream iss(strStream);
@@ -145,13 +166,13 @@ bool inFile(string fileName, vector<shared_ptr<Worker>> & inWorkers)
 		}
 
 
-		if (type == 'H') // äîáàâëÿåì ðàáîòíèêà â êîëëåêöèþ ðàáîòíèêîâ
+		if (type == 'H') // WorkerPerHour
 		{
 			shared_ptr<WorkerPerHour> workerH(new WorkerPerHour((int)tempID, tempFirstName, tempLastName, tempSalary));
 			shared_ptr<Worker> workerHbase = static_pointer_cast<Worker>(workerH);
 			inWorkers.push_back(workerHbase);
 		}
-		else // type == M
+		else // type == M - WorkerPerMonth
 		{
 			shared_ptr<WorkerPerMonth> workerM(new WorkerPerMonth((int)tempID, tempFirstName, tempLastName, tempSalary));
 			shared_ptr<Worker> workerMbase = static_pointer_cast<Worker>(workerM);
@@ -198,7 +219,7 @@ bool outFile(string fileName, vector<shared_ptr<Worker>> & outWorkers)
 
 bool outFile(string fileName, vector<shared_ptr<Worker>> & outWorkers, int N, int fromTop1_or_fromBottom0)
 {
-	// âûâåñòè â ôàéë N ïåðâûõ (ïàðàìåòð == 1) èëè ïîñëåäíèõ (ïàðàìåòð == 0) ñîòðóäíèêîâ
+	// output N workers from the top of list - 1 or from the bottom - 0  
 	ofstream fo;
 	fo.open(fileName);
 	if (N > outWorkers.size())
@@ -248,28 +269,5 @@ bool outFile(string fileName, vector<shared_ptr<Worker>> & outWorkers, int N, in
 	fo.close();
 	return true;
 
-}
-
-int main()
-{
-	string outFcopy = "outCopy.txt";
-	string outFsorted = "outSorted.txt";
-	string outFromTop = "outFromTop.txt";
-	string outFromBottom = "outFromBottom.txt";
-
-	string inF = "in.txt";
-
-	vector<shared_ptr<Worker>> workers;
-	if (inFile(inF, workers))
-		outFile(outFcopy, workers);
-	vector<shared_ptr<Worker>> sorted;
-	sorted = sortSalary(workers);
-	outFile(outFsorted, sorted);
-	outFile(outFromTop, sorted, 5, 1);
-	outFile(outFromBottom, sorted, 5, 0);
-
-
-	system("pause");
-	return 0;
 }
 
