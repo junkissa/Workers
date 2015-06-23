@@ -1,0 +1,6 @@
+ID      First Name  Last Name       Salary    
+466     Olga        Bilous          12121     
+54      Ann         Toly            12121     
+221     Daniil      Sukhonos        12000     
+45      Julia       Sona            9000      
+87      Tom         Nit             3827.2    

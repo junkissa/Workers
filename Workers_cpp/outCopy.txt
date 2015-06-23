@@ -1,0 +1,10 @@
+ID      First Name  Last Name       Salary    
+1       Maria       Bilous          1996.8    
+221     Daniil      Sukhonos        12000     
+466     Olga        Bilous          12121     
+9       Rane        Bilavasa        1996.8    
+19      Rina        Urto            1996.8    
+54      Ann         Toly            12121     
+87      Tom         Nit             3827.2    
+45      Julia       Sona            9000      
+882     Fred        Kren            3194.88   

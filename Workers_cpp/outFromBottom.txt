@@ -1,0 +1,6 @@
+ID      First Name  Last Name       Salary    
+19      Rina        Urto            1996.8    
+1       Maria       Bilous          1996.8    
+9       Rane        Bilavasa        1996.8    
+882     Fred        Kren            3194.88   
+87      Tom         Nit             3827.2    

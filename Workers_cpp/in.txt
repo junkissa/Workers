@@ -1,0 +1,9 @@
+H 001 Maria Bilous 12
+M 221 Daniil Sukhonos 12000.0
+M 466 Olga Bilous 12121
+H 9 Rane Bilavasa 12
+H 19 Rina Urto 12
+M 54 Ann Toly 12121
+H 87 Tom Nit 23
+M 45 Julia Sona 9000
+H 882 Fred Kren 19.2
